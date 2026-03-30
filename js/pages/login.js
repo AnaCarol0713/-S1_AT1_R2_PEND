@@ -1,4 +1,3 @@
-
 const container = document.querySelector(".container");
 const registerBtn = document.querySelector(".register__btn");
 const loginBtn = document.querySelector(".login__btn");
@@ -8,14 +7,8 @@ const senha = document.getElementById("senha");
 const validacaoSenha = document.getElementById("validacaoSenha");
 const idade = document.getElementById("idade");
 const CPF = document.getElementById("CPF");
+const msgError = document.getElementsByClassName("msgError")[0];
 const form = document.getElementById("form");
-const msgErrorNome = document.getElementsByClassName("msgErrorNome")[0];
-const msgErrorEmail = document.getElementsByClassName("msgErrorEmail")[0];
-const msgErrorSenha = document.getElementsByClassName("msgErrorSenha")[0];
-const msgErrorValidarSenha = document.getElementsByClassName("msgErrorValidarSenha")[0];
-const msgErrorIdade = document.getElementsByClassName("msgErrorIdade")[0];
-const msgErrorCPF = document.getElementsByClassName("msgErrorCPF")[0];
-
 registerBtn.addEventListener("click", () => {
   container.classList.add("active");
 });
@@ -25,55 +18,20 @@ loginBtn.addEventListener("click", () => {
 });
 
 nome.addEventListener("input", (event) => {
-  const regex = /^[a-zA-ZÀ-ÿ\s]+$/;
-
-  console.log("Nome digitado:", event.target.value);
-
-  console.log(regex.test(event.target.value));
-
-  if (event.target.value.lenght < 3) {
-    console.log("O nome precisa ser maior que 3 caracteres");
-    console.log("o nome precisa ser Completo");
-  }
-
-  if (!regex.test(event.target.value)) {
-    console.log("Nome Inválido");
-    msgErrorNome.textContent = "Nome inválido"
-    
-  }
-  setTimeout(() => {
-    msgErrorNome.textContent = "";
-  }, 5000);
+  console.log(nome.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, ""));
+  event.target.value = nome.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
 });
 
 email.addEventListener("input", (event) => {
-  const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const checkEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  console.log(regexEmail.test(event.target.value));
-
-  if (!regexEmail.test(event.target.value)) {
-    console.log("E-mail inválido!");
-    msgErrorEmail.textContent = "Email inválido"
-  }
-  setTimeout(() => {
-    msgErrorEmail.textContent = "";
-  }, 5000);
+  console.log(checkEmail.test(event.target.value));
 });
 
 senha.addEventListener("input", (event) => {
   const regexSenha = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{10,}).*$/;
 
   console.log(regexSenha.test(event.target.value));
-
-  if (!regexSenha.test(event.target.value)) {
-    console.log("A senha não atende aos requisitos.");
-  } else {
-    console.log("A senha é válida.");
-    msgErrorSenha.textContent = "Senha inválido"
-  }
-  setTimeout(() => {
-    msgErrorSenha.textContent = "";
-  }, 5000);
 });
 
 validacaoSenha.addEventListener("input", () => {
@@ -81,60 +39,107 @@ validacaoSenha.addEventListener("input", () => {
     console.log("Senha igual");
   } else {
     console.log("Senha diferente");
-    msgErrorValidarSenha.textContent = "Senha inválido"
+    msgErrorValidarSenha.textContent = "Senha inválido";
   }
-  setTimeout(() => {
-    msgErrorValidarSenha.textContent = "";
-  }, 5000);
 });
 
 idade.addEventListener("input", (event) => {
   let idade = event.target.value.replace(/\D/g, "");
   console.log(idade);
-
-  if (idade >= 18) {
-    console.log("Login Autorizado");
-  } else {
-    console.log("Login negado");
-    msgErrorIdade.textContent = "Você Precisa ter Mais 18 Anos"
-  }
-  setTimeout(() => {
-    msgErrorIdade.textContent = "";
-  }, 5000);
 });
 
 CPF.addEventListener("input", (event) => {
+  const msgErrorCPF = document.getElementsByClassName("msgErrorCPF")[0];
+
   let cpf = event.target.value.replace(/\D/g, "");
 
   cpf = cpf.slice(0, 11);
 
-  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2"); 
-  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2"); 
-  cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2"); 
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+  cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 
   event.target.value = cpf;
   if (cpf.length < 11) {
     msgErrorCPF.textContent = "CPF inválido (mínimo 11 dígitos)";
   } else {
-    msgErrorCPF.textContent = ""; 
+    msgErrorCPF.textContent = "";
   }
   setTimeout(() => {
     msgErrorCPF.textContent = "";
   }, 5000);
 });
 
-registerBtn.addEventListener("input", (event) => {
-  let btn = event.target.value.replace
-
-  
-if (btn.length < 11) {
-    msgErrorbtn.textContent = "Problema(s) ao registrar";
-  } else {
-    msgErrorbtn.textContent = ""; 
+function checkNome() {
+  if (nome.value.length <= 3) {
+    return false;
   }
+  return true;
+}
+
+function checkEmail() {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (regex.test(email.value)) {
+    return true;
+  }
+  return false;
+}
+
+function checkIdade() {
+  if (idade.value >= 18) {
+    return true;
+  }
+  return false;
+}
+
+function checkValidacaoSenha() {
+  return senha.value === validacaoSenha.value;
+}
+
+const createDisplayMsgError = (mensagem) => {
+  msgError.textContent = mensagem;
+
   setTimeout(() => {
-    msgErrorbtn.textContent = "";
+    msgError.textContent = "";
   }, 5000);
-})
+};
 
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!checkNome()) {
+    createDisplayMsgError("O nome precisa ter no minimo 4 caracteres");
+    return;
+  }
 
+  if (senha.value !== validacaoSenha.value) {
+    createDisplayMsgError("As senhas não são iguais");
+    return;
+  }
+
+  const regexSenha = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{10,}).*$/;
+  if (!regexSenha.test(senha.value)) {
+    createDisplayMsgError(
+      "Senha inválida (mín: 10 caracteres, 1 maiúscula, 1 número e 1 símbolo)",
+    );
+    return;
+  }
+
+  if (!checkEmail()) {
+    createDisplayMsgError("Digite um e-mail válido");
+    return;
+  }
+
+  if (!checkIdade()) {
+    createDisplayMsgError("Você precisa ter 18 anos ou mais");
+    return;
+  }
+
+  const cpfNumeros = CPF.value.replace(/\D/g, "");
+  if (cpfNumeros.length !== 11) {
+    createDisplayMsgError("CPF deve conter 11 dígitos");
+    return;
+  }
+
+  console.log("TUDO OK!");
+});
